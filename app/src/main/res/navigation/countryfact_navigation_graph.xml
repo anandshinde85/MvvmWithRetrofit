@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/countryfact_navigation_graph"
+    app:startDestination="@id/factsListFragment">
+
+    <fragment
+        android:id="@+id/factsListFragment"
+        android:name="anand.example.mvvmsample.fragments.FactsListFragment"
+        android:label="Fact's List"
+        tools:layout="@layout/fragment_facts_list">
+        <action
+            android:id="@+id/action_factsListFragment_to_factDetails"
+            app:destination="@id/factDetails"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>s
+    <fragment
+        android:id="@+id/factDetails"
+        android:name="anand.example.mvvmsample.fragments.FactDetails"
+        android:label="fragment_fact_details"
+        tools:layout="@layout/fragment_fact_details" />
+</navigation>
