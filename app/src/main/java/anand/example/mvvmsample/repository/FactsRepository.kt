@@ -3,12 +3,10 @@ package anand.example.mvvmsample.repository
 import anand.example.mvvmsample.model.FactsResponse
 import anand.example.mvvmsample.rest.FactsApi
 import anand.example.mvvmsample.rest.RestAdapter
-import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Call
 import retrofit2.Callback
@@ -67,46 +65,18 @@ import retrofit2.Response
 //        }
 //        return titleWithFacts
 //    }
-//
-//    fun isNetworkAvailable(context: Context?): Boolean {
-//        if (context == null) return false
-//        val connectivityManager =
-//            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            val capabilities =
-//                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-//            if (capabilities != null) {
-//                when {
-//                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-//                        return true
-//                    }
-//                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-//                        return true
-//                    }
-//                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-//                        return true
-//                    }
-//                }
-//            }
-//        } else {
-//            val activeNetworkInfo = connectivityManager.activeNetworkInfo
-//            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
-//                return true
-//            }
-//        }
-//        return false
-//    }
 //}
 
 
 class FactsRepository() {
 
-    fun getFacts(): FactsResponse? {
-        var titleWithFacts: FactsResponse? = null
+    fun getFacts(dataLoading: MutableLiveData<Boolean>): MutableLiveData<FactsResponse> {
+        val titleWithFacts = MutableLiveData<FactsResponse>()
         RestAdapter.restAdapter.create(FactsApi::class.java).getFacts()
             .enqueue(object : Callback<FactsResponse> {
                 override fun onFailure(call: Call<FactsResponse>, t: Throwable) {
-//                    titleWithFacts.postValue(null)
+                    dataLoading.postValue(false)
+                    titleWithFacts.postValue(null)
                 }
 
                 override fun onResponse(
@@ -114,7 +84,8 @@ class FactsRepository() {
                     response: Response<FactsResponse>
                 ) {
                     if (response.code() == 200) {
-                        titleWithFacts = response.body()!!
+                        dataLoading.postValue(false)
+                        titleWithFacts.postValue(response.body())
                     }
                 }
             })
