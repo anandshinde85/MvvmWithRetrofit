@@ -46,6 +46,7 @@ dependencies {
     implementation supportDependencies.ktx
     implementation supportDependencies.constraintLayout
     implementation supportDependencies.legacySupport
+    implementation supportDependencies.swipeRefresh
     implementation supportDependencies.fragmentNav
     implementation supportDependencies.navUi
     implementation supportDependencies.viewModel

@@ -56,6 +56,7 @@ ext {
             cardView         : "androidx.cardview:cardview:${cardview}",
             constraintLayout : "androidx.constraintlayout:constraintlayout:${constraintLayout}",
             legacySupport    : "androidx.legacy:legacy-support-v4:${legacy}",
+            swipeRefresh     : "androidx.swiperefreshlayout:swiperefreshlayout:${legacy}",
 
             // Navigation graph
             fragmentNav      : "androidx.navigation:navigation-fragment-ktx:${navVersion}",
