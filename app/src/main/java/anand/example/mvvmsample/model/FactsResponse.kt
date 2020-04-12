@@ -11,7 +11,7 @@ data class FactsResponse(
 
 @Parcelize
 data class Rows(
-    val title: String,
-    val description: String,
-    val imageHref: String
+    val title: String?,
+    val description: String?,
+    val imageHref: String?
 ) : Parcelable
