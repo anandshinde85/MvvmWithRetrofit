@@ -85,11 +85,18 @@ class FactsRepository() {
                 ) {
                     if (response.code() == 200) {
                         dataLoading.postValue(false)
-                        titleWithFacts.postValue(response.body())
+                        titleWithFacts.postValue(response.body()?.let { removeEmptyItems(it) })
                     }
                 }
             })
         return titleWithFacts
+    }
+
+    private fun removeEmptyItems(factsResponse: FactsResponse): FactsResponse {
+        val rows = factsResponse.rows.filter { row ->
+            !row.title.isNullOrBlank() && !row.description.isNullOrBlank() && !row.imageHref.isNullOrBlank()
+        }
+        return FactsResponse(factsResponse.title, rows)
     }
 
     fun isNetworkAvailable(context: Context?): Boolean {
