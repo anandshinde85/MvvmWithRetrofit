@@ -4,12 +4,14 @@ import anand.example.mvvmsample.R
 import anand.example.mvvmsample.model.Rows
 import anand.example.mvvmsample.viewholders.FactsViewHolder
 import android.view.LayoutInflater
-import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class FactListAdapter(val factList: MutableList<Rows>) : RecyclerView.Adapter<FactsViewHolder>() {
+class FactListAdapter(
+    private val factList: MutableList<Rows>,
+    val onFactClicked : (Rows) -> Unit
+) : RecyclerView.Adapter<FactsViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactsViewHolder {
         val rootView =
             LayoutInflater.from(parent.context).inflate(R.layout.fact_list_item, parent, false)
@@ -29,6 +31,9 @@ class FactListAdapter(val factList: MutableList<Rows>) : RecyclerView.Adapter<Fa
         fact.imageHref?.let {
             Picasso.get().load(it).placeholder(R.drawable.ic_place_holder)
                 .error(R.drawable.ic_download_error).into(holder.ivIcon)
+        }
+        holder.itemView.setOnClickListener {
+           onFactClicked(fact)
         }
     }
 
