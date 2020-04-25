@@ -2,6 +2,7 @@ package anand.example.mvvmsample.fragments
 
 import anand.example.mvvmsample.R
 import anand.example.mvvmsample.adapters.FactListAdapter
+import anand.example.mvvmsample.model.Rows
 import anand.example.mvvmsample.viewmodels.FactsViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_facts_list.*
 
@@ -40,6 +42,7 @@ class FactsListFragment : Fragment() {
 
     private fun initObserver() {
         factsViewModel.getTitleWithFacts().observe(viewLifecycleOwner, Observer { factsResponse ->
+            requireActivity().title = factsResponse.title
             swipeRefresh.isRefreshing = false
             factsResponse?.let { factsAdapter.updateList(factsResponse.rows) }
         })
@@ -62,7 +65,9 @@ class FactsListFragment : Fragment() {
     }
 
     private fun initUi() {
-        factsAdapter = FactListAdapter(mutableListOf())
+        factsAdapter =
+            FactListAdapter(mutableListOf(), onFactClicked = {fact ->
+                onFactClicked(fact) })
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = factsAdapter
         swipeRefresh.setOnRefreshListener {
@@ -74,5 +79,9 @@ class FactsListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initObserver()
+    }
+
+    private fun onFactClicked(rows: Rows) {
+        Navigation.findNavController(recyclerView).navigate(FactsListFragmentDirections.factsListFragmentToFactDetailsFragment(rows))
     }
 }
