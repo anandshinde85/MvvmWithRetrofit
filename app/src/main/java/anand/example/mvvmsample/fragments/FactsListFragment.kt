@@ -42,9 +42,10 @@ class FactsListFragment : Fragment() {
 
     private fun initObserver() {
         factsViewModel.getTitleWithFacts().observe(viewLifecycleOwner, Observer { factsResponse ->
-            requireActivity().title = factsResponse.title
             swipeRefresh.isRefreshing = false
-            factsResponse?.let { factsAdapter.updateList(factsResponse.rows) }
+            factsResponse?.let {
+                requireActivity().title = it.title
+                factsAdapter.updateList(it.rows) }
         })
 
         factsViewModel.getDataLoading().observe(viewLifecycleOwner, Observer {
