@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     dataBinding {
         enabled = true
@@ -53,6 +53,7 @@ dependencies {
     implementation supportDependencies.swipeRefresh
     implementation supportDependencies.fragmentNav
     implementation supportDependencies.navUi
+    implementation supportDependencies.preferences
     implementation supportDependencies.viewModel
     implementation supportDependencies.liveData
     implementation supportDependencies.retrofit

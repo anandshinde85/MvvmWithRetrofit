@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.71'
+    ext.kotlin_version = '1.3.72'
     repositories {
         google()
         jcenter()
@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         def nav_version = "2.2.1"
-        classpath 'com.android.tools.build:gradle:3.6.1'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
 
@@ -48,6 +48,7 @@ ext {
     lifeCycleVersion = '2.2.0'
     ktLib = '1.3.71'
     roomVersion = '2.2.5'
+    preferences = '1.1.0'
 
     //Support Libraries dependencies
     supportDependencies = [
@@ -61,6 +62,9 @@ ext {
             // Navigation graph
             fragmentNav      : "androidx.navigation:navigation-fragment-ktx:${navVersion}",
             navUi            : "androidx.navigation:navigation-ui-ktx:${navVersion}",
+
+            // Preferences
+            preferences      : "androidx.preference:preference-ktx:${preferences}",
 
             // View model
             viewModel        : "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifeCycleVersion}",
