@@ -29,6 +29,7 @@ class FactsRepository(context: Context) {
         val titleWithFacts = MutableLiveData<FactsResponse>()
         GlobalScope.launch(Dispatchers.IO) {
             factsDao.getAllFacts()?.let {
+                dataLoading.postValue(false)
                 titleWithFacts.postValue(it)
             } ?: run {
                 fetchFromRemote(dataLoading, titleWithFacts)
