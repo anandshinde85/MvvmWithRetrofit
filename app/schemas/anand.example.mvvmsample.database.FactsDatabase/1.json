@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8291fb54a98472dd4800a46b30b24a61",
+    "identityHash": "8ce5ce85dfd7ff9c6915416624396fc1",
     "entities": [
       {
         "tableName": "facts_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `description` TEXT NOT NULL, `imageHref` TEXT NOT NULL, `titleCreatorId` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `rows` TEXT NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "title",
             "columnName": "title",
@@ -15,27 +21,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "description",
-            "columnName": "description",
+            "fieldPath": "rows",
+            "columnName": "rows",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "imageHref",
-            "columnName": "imageHref",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "titleCreatorId",
-            "columnName": "titleCreatorId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -52,7 +40,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8291fb54a98472dd4800a46b30b24a61')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8ce5ce85dfd7ff9c6915416624396fc1')"
     ]
   }
 }
