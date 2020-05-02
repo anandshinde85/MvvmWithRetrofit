@@ -2,11 +2,12 @@ package anand.example.mvvmsample.viewmodels
 
 import anand.example.mvvmsample.model.FactsResponse
 import anand.example.mvvmsample.repository.FactsRepository
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 
-class FactsViewModel() : ViewModel() {
+class FactsViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var factsResponse: MutableLiveData<FactsResponse>
     private var dataLoading: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -15,10 +16,8 @@ class FactsViewModel() : ViewModel() {
     }
 
     fun fetchFacts() {
-//        viewModelScope.launch {
         dataLoading.value = true
-        factsResponse = FactsRepository().getFacts(dataLoading)
-//        }
+        factsResponse = FactsRepository(getApplication()).getFacts(dataLoading)
     }
 
     fun getTitleWithFacts(): LiveData<FactsResponse> {
