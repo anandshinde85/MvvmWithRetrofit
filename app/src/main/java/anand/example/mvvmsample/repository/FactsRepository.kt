@@ -1,5 +1,7 @@
 package anand.example.mvvmsample.repository
 
+import anand.example.mvvmsample.database.FactsDatabase
+import anand.example.mvvmsample.database.daos.FactsDao
 import anand.example.mvvmsample.model.FactsResponse
 import anand.example.mvvmsample.rest.FactsApi
 import anand.example.mvvmsample.rest.RestAdapter
@@ -8,70 +10,37 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-//class FactsRepository(val application: Application) {
-//    private val titleRowsDao: TitleRowsDao
-//
-//    init {
-//        val database: FactsDatabase = FactsDatabase.getInstance(application)
-//        titleRowsDao = database.rowDao()
-//    }
-//
-//    fun getFacts(): LiveData<List<TitleWithFacts>> {
-//        val titleWithFacts: MutableLiveData<List<TitleWithFacts>> = MutableLiveData(mutableListOf())
-//        if (isNetworkAvailable(application)) {
-//            RestAdapter.restAdapter.create(FactsApi::class.java).getFacts()
-//                .enqueue(object : Callback<FactsResponse> {
-//                    override fun onFailure(call: Call<FactsResponse>, t: Throwable) {
-//                        titleWithFacts.postValue(null)
-//                    }
-//
-//                    override fun onResponse(
-//                        call: Call<FactsResponse>,
-//                        response: Response<FactsResponse>
-//                    ) {
-//                        if (response.code() == 200) {
-//                            val factsResponse = response.body()
-//
-//                            factsResponse?.let {
-//                                // Insert title
-//                                val titleRoom = TitleRoom(it.title)
-//                                titleRowsDao.insertTitle(titleRoom)
-//
-//                                val titleId = titleRowsDao.getTitle(it.title)
-//
-//                                // Insert Rows
-//                                val rowList: MutableList<RowRoom> = mutableListOf()
-//                                it.rows.forEach { row ->
-//                                    val rowRoom = RowRoom(
-//                                        title = row.title,
-//                                        description = row.description,
-//                                        imageHref = row.imageHref,
-//                                        titleCreatorId = titleId
-//                                    )
-//                                    rowList.add(rowRoom)
-//                                }
-//                                titleRowsDao.insertAllRow(rowList)
-//                                titleWithFacts.postValue(titleRowsDao.getTitleWithFacts())
-//                            }
-//                        }
-//                    }
-//                })
-//        } else {
-//            titleWithFacts.postValue(titleRowsDao.getTitleWithFacts())
-//        }
-//        return titleWithFacts
-//    }
-//}
+class FactsRepository(context: Context) {
+    private val factsDao: FactsDao
 
-
-class FactsRepository() {
+    init {
+        val database = FactsDatabase(context)
+        factsDao = database.factsDao()
+    }
 
     fun getFacts(dataLoading: MutableLiveData<Boolean>): MutableLiveData<FactsResponse> {
         val titleWithFacts = MutableLiveData<FactsResponse>()
+        GlobalScope.launch(Dispatchers.IO) {
+            factsDao.getAllFacts()?.let {
+                titleWithFacts.postValue(it)
+            } ?: run {
+                fetchFromRemote(dataLoading, titleWithFacts)
+            }
+        }
+        return titleWithFacts
+    }
+
+    private fun fetchFromRemote(
+        dataLoading: MutableLiveData<Boolean>,
+        titleWithFacts: MutableLiveData<FactsResponse>
+    ) {
         RestAdapter.restAdapter.create(FactsApi::class.java).getFacts()
             .enqueue(object : Callback<FactsResponse> {
                 override fun onFailure(call: Call<FactsResponse>, t: Throwable) {
@@ -83,13 +52,15 @@ class FactsRepository() {
                     call: Call<FactsResponse>,
                     response: Response<FactsResponse>
                 ) {
-                    if (response.code() == 200) {
+                    if (response.isSuccessful) {
                         dataLoading.postValue(false)
                         titleWithFacts.postValue(response.body()?.let { removeEmptyItems(it) })
+                        GlobalScope.launch(Dispatchers.IO) {
+                            factsDao.insertFacts(response.body())
+                        }
                     }
                 }
             })
-        return titleWithFacts
     }
 
     private fun removeEmptyItems(factsResponse: FactsResponse): FactsResponse {
