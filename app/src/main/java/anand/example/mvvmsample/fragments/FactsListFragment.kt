@@ -38,6 +38,7 @@ class FactsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        initObserver()
     }
 
     private fun initObserver() {
@@ -45,7 +46,8 @@ class FactsListFragment : Fragment() {
             swipeRefresh.isRefreshing = false
             factsResponse?.let {
                 requireActivity().title = it.title
-                factsAdapter.updateList(it.rows) }
+                factsAdapter.updateList(it.rows)
+            }
         })
 
         factsViewModel.getDataLoading().observe(viewLifecycleOwner, Observer {
@@ -67,8 +69,9 @@ class FactsListFragment : Fragment() {
 
     private fun initUi() {
         factsAdapter =
-            FactListAdapter(mutableListOf(), onFactClicked = {fact ->
-                onFactClicked(fact) })
+            FactListAdapter(mutableListOf(), onFactClicked = { fact ->
+                onFactClicked(fact)
+            })
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = factsAdapter
         swipeRefresh.setOnRefreshListener {
@@ -77,12 +80,8 @@ class FactsListFragment : Fragment() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        initObserver()
-    }
-
     private fun onFactClicked(rows: Rows) {
-        Navigation.findNavController(recyclerView).navigate(FactsListFragmentDirections.factsListFragmentToFactDetailsFragment(rows))
+        Navigation.findNavController(recyclerView)
+            .navigate(FactsListFragmentDirections.factsListFragmentToFactDetailsFragment(rows))
     }
 }
