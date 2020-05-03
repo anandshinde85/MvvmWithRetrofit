@@ -6,6 +6,7 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SharedPreferenceHelper {
     companion object {
@@ -34,7 +35,7 @@ class SharedPreferenceHelper {
         }
     }
 
-    fun getTime() = GlobalScope.launch(Dispatchers.IO) {
+    fun getTime() = runBlocking {
         preferences?.getLong(PREF_TIME, 0)
     }
 }
