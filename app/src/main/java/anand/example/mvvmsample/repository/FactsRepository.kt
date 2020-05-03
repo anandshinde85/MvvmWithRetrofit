@@ -2,6 +2,7 @@ package anand.example.mvvmsample.repository
 
 import anand.example.mvvmsample.database.FactsDatabase
 import anand.example.mvvmsample.database.daos.FactsDao
+import anand.example.mvvmsample.helpers.SharedPreferenceHelper
 import anand.example.mvvmsample.model.FactsResponse
 import anand.example.mvvmsample.rest.FactsApi
 import anand.example.mvvmsample.rest.RestAdapter
@@ -16,22 +17,32 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class FactsRepository(context: Context) {
     private val factsDao: FactsDao
+    private val preferenceHelper: SharedPreferenceHelper
+    private val CACHE_TIME = 10 * 1000 * 60 * 60L // 1 Hour cache
 
     init {
         val database = FactsDatabase(context)
         factsDao = database.factsDao()
+        preferenceHelper = SharedPreferenceHelper(context)
     }
 
     fun getFacts(dataLoading: MutableLiveData<Boolean>): MutableLiveData<FactsResponse> {
         val titleWithFacts = MutableLiveData<FactsResponse>()
         GlobalScope.launch(Dispatchers.IO) {
-            factsDao.getAllFacts()?.let {
-                dataLoading.postValue(false)
-                titleWithFacts.postValue(it)
-            } ?: run {
+            val savedTime = preferenceHelper.getTime()
+            if (savedTime != null && savedTime != 0L && Calendar.getInstance().timeInMillis - savedTime < CACHE_TIME) {
+                // Data will be loaded from cache
+                factsDao.getAllFacts()?.let {
+                    dataLoading.postValue(false)
+                    titleWithFacts.postValue(it)
+                }
+            } else {
+                // Clear database and fetch from remote
+                factsDao.deleteAllFacts()
                 fetchFromRemote(dataLoading, titleWithFacts)
             }
         }
@@ -58,6 +69,7 @@ class FactsRepository(context: Context) {
                         titleWithFacts.postValue(response.body()?.let { removeEmptyItems(it) })
                         GlobalScope.launch(Dispatchers.IO) {
                             factsDao.insertFacts(response.body())
+                            preferenceHelper.saveTime(Calendar.getInstance().timeInMillis)
                         }
                     }
                 }
