@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 
 import anand.example.mvvmsample.R
+import anand.example.mvvmsample.databinding.FragmentFactDetailsBinding
 import anand.example.mvvmsample.model.Rows
+import androidx.databinding.DataBindingUtil
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_fact_details.*
 
@@ -16,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_fact_details.*
  */
 class FactDetailsFragment : Fragment() {
     private lateinit var factItem: Rows
+    private lateinit var dataBinding: FragmentFactDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,25 +32,13 @@ class FactDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fact_details, container, false)
+        dataBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_fact_details, container, false)
+        return dataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(factItem) {
-            imageHref?.let {
-                Picasso.get().load(it).placeholder(R.drawable.ic_place_holder)
-                    .error(R.drawable.ic_download_error).into(factImage)
-            }
-
-            title?.let {
-                factTitle.text = it
-                activity?.title = it
-            }
-
-            description?.let {
-                factDetail.text = it
-            }
-        }
+        dataBinding.row = factItem
     }
 }
