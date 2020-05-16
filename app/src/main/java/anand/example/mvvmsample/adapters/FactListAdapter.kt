@@ -1,39 +1,39 @@
 package anand.example.mvvmsample.adapters
 
 import anand.example.mvvmsample.R
+import anand.example.mvvmsample.databinding.FactListItemBinding
+import anand.example.mvvmsample.listeners.FactClickListener
 import anand.example.mvvmsample.model.Rows
 import anand.example.mvvmsample.viewholders.FactsViewHolder
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 
 class FactListAdapter(
     private val factList: MutableList<Rows>,
-    val onFactClicked : (Rows) -> Unit
-) : RecyclerView.Adapter<FactsViewHolder>() {
+    val onFactClicked: (Rows) -> Unit
+) : RecyclerView.Adapter<FactsViewHolder>(), FactClickListener {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactsViewHolder {
-        val rootView =
-            LayoutInflater.from(parent.context).inflate(R.layout.fact_list_item, parent, false)
-        return FactsViewHolder(rootView)
+        val inflater = LayoutInflater.from(parent.context)
+        val view = DataBindingUtil.inflate<FactListItemBinding>(
+            inflater,
+            R.layout.fact_list_item,
+            parent,
+            false
+        )
+        return FactsViewHolder(view)
     }
 
     override fun getItemCount() = factList.size
 
     override fun onBindViewHolder(holder: FactsViewHolder, position: Int) {
         val fact = factList[position]
-        fact.title?.let {
-            holder.tvTitle.text = it
-        }
-        fact.description?.let {
-            holder.tvDescription.text = it
-        }
-        fact.imageHref?.let {
-            Picasso.get().load(it).placeholder(R.drawable.ic_place_holder)
-                .error(R.drawable.ic_download_error).into(holder.ivIcon)
-        }
+
+        holder.view.row = fact
         holder.itemView.setOnClickListener {
-           onFactClicked(fact)
+            onFactClicked(fact)
         }
     }
 
@@ -41,5 +41,9 @@ class FactListAdapter(
         clear()
         addAll(facts)
         notifyDataSetChanged()
+    }
+
+    override fun onFactClicked(view: View) {
+//        onFactClicked(fact)
     }
 }
