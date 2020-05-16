@@ -66,10 +66,13 @@ class FactsRepository(context: Context) {
                 ) {
                     if (response.isSuccessful) {
                         dataLoading.postValue(false)
-                        titleWithFacts.postValue(response.body()?.let { removeEmptyItems(it) })
-                        GlobalScope.launch(Dispatchers.IO) {
-                            factsDao.insertFacts(response.body())
-                            preferenceHelper.saveTime(Calendar.getInstance().timeInMillis)
+                        response.body()?.let {
+                            val processedData = removeEmptyItems(it)
+                            titleWithFacts.postValue(processedData)
+                            GlobalScope.launch(Dispatchers.IO) {
+                                factsDao.insertFacts(processedData)
+                                preferenceHelper.saveTime(Calendar.getInstance().timeInMillis)
+                            }
                         }
                     }
                 }
