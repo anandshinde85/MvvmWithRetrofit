@@ -1,17 +1,20 @@
 package anand.example.mvvmsample.fragments
 
+import anand.example.mvvmsample.R
+import anand.example.mvvmsample.databinding.FragmentFactDetailsBinding
+import anand.example.mvvmsample.model.FactPalette
+import anand.example.mvvmsample.model.Rows
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import anand.example.mvvmsample.R
-import anand.example.mvvmsample.databinding.FragmentFactDetailsBinding
-import anand.example.mvvmsample.model.Rows
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.palette.graphics.Palette
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_fact_details.*
+import com.squareup.picasso.Target
 
 /**
  * A simple [Fragment] subclass.
@@ -40,5 +43,29 @@ class FactDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dataBinding.row = factItem
+        factItem.imageHref?.let {
+            setupBackgroundColor(it)
+        }
+    }
+
+    private fun setupBackgroundColor(url: String) {
+        Picasso.get().load(url).into(object : Target {
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+            }
+
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                bitmap?.let {
+                    Palette.from(it).generate { palette ->
+                        val color = palette?.lightVibrantSwatch?.rgb ?: 0
+                        val myPalette = FactPalette(color)
+                        dataBinding.palette = myPalette
+                    }
+                }
+            }
+
+        })
     }
 }

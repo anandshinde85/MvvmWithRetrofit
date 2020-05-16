@@ -49,6 +49,7 @@ ext {
     ktLib = '1.3.71'
     roomVersion = '2.2.5'
     preferences = '1.1.0'
+    palette = '1.0.0'
 
     //Support Libraries dependencies
     supportDependencies = [
@@ -58,6 +59,7 @@ ext {
             constraintLayout : "androidx.constraintlayout:constraintlayout:${constraintLayout}",
             legacySupport    : "androidx.legacy:legacy-support-v4:${legacy}",
             swipeRefresh     : "androidx.swiperefreshlayout:swiperefreshlayout:${legacy}",
+            palette          : "androidx.palette:palette:${palette}",
 
             // Navigation graph
             fragmentNav      : "androidx.navigation:navigation-fragment-ktx:${navVersion}",

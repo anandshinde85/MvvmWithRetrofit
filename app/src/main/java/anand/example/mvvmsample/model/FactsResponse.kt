@@ -28,3 +28,5 @@ data class Rows(
     val description: String?,
     val imageHref: String?
 ) : Parcelable
+
+data class FactPalette(var color: Int)

@@ -8,18 +8,23 @@
         <variable
             name="row"
             type="anand.example.mvvmsample.model.Rows" />
+
+        <variable
+            name="palette"
+            type="anand.example.mvvmsample.model.FactPalette" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@{palette.color}"
         android:orientation="vertical"
         android:padding="20dp">
 
         <ImageView
             android:id="@+id/factImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_gravity="center"
             android:imageUrl="@{row.imageHref}"
             android:importantForAccessibility="no" />

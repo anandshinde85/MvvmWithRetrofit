@@ -66,6 +66,7 @@ dependencies {
     implementation supportDependencies.picassoDownloader
     implementation supportDependencies.room
     implementation supportDependencies.roomCoroutine
+    implementation supportDependencies.palette
 
     testImplementation supportDependencies.jUnit
     androidTestImplementation supportDependencies.testRunner
