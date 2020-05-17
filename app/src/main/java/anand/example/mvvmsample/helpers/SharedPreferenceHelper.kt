@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 class SharedPreferenceHelper {
     companion object {
         private const val PREF_TIME = "pref_time"
-        private var preferences: SharedPreferences? = null
+        private lateinit var preferences: SharedPreferences
 
         @Volatile
         private var instance: SharedPreferenceHelper? = null
@@ -31,11 +31,15 @@ class SharedPreferenceHelper {
 
     fun saveTime(time: Long) {
         GlobalScope.launch(Dispatchers.IO) {
-            preferences?.edit()?.putLong(PREF_TIME, time)?.apply()
+            preferences.edit()?.putLong(PREF_TIME, time)?.apply()
         }
     }
 
     fun getTime() = runBlocking {
-        preferences?.getLong(PREF_TIME, 0)
+        preferences.getLong(PREF_TIME, 0)
+    }
+
+    fun getCacheDuration() = runBlocking {
+        preferences.getString("cache_duration", "60")
     }
 }

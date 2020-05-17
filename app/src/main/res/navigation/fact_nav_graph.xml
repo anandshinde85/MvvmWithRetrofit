@@ -16,6 +16,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/factListToSettings"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/factDetails"
@@ -25,4 +28,8 @@
             android:name="factItem"
             app:argType="anand.example.mvvmsample.model.Rows" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="anand.example.mvvmsample.fragments.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

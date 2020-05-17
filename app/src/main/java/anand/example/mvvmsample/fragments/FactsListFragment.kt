@@ -5,11 +5,9 @@ import anand.example.mvvmsample.adapters.FactListAdapter
 import anand.example.mvvmsample.model.Rows
 import anand.example.mvvmsample.viewmodels.FactsViewModel
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +24,7 @@ class FactsListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         factsViewModel = ViewModelProvider(this).get(FactsViewModel::class.java)
     }
 
@@ -65,6 +64,22 @@ class FactsListFragment : Fragment() {
         recyclerView.visibility = GONE
         progressBar.visibility = VISIBLE
         factsViewModel.fetchFacts()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.setting ->{
+                view?.let {
+                    Navigation.findNavController(it).navigate(FactsListFragmentDirections.factListToSettings())
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initUi() {

@@ -17,12 +17,15 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.NumberFormatException
 import java.util.*
 
 class FactsRepository(context: Context) {
     private val factsDao: FactsDao
     private val preferenceHelper: SharedPreferenceHelper
-    private val CACHE_TIME = 10 * 1000 * 60 * 60L // 1 Hour cache
+    private val DEFAULT_CACHE_TIME = 1000 * 60 * 60L // 1 Hour cache
+    private val ONE_SECOND = 1000
+    private val ONE_MINUTE = ONE_SECOND * 60
 
     init {
         val database = FactsDatabase(context)
@@ -33,8 +36,9 @@ class FactsRepository(context: Context) {
     fun getFacts(dataLoading: MutableLiveData<Boolean>): MutableLiveData<FactsResponse> {
         val titleWithFacts = MutableLiveData<FactsResponse>()
         GlobalScope.launch(Dispatchers.IO) {
+            val refreshTime = getCacheDuration()
             val savedTime = preferenceHelper.getTime()
-            if (savedTime != null && savedTime != 0L && Calendar.getInstance().timeInMillis - savedTime < CACHE_TIME) {
+            if (savedTime != null && savedTime != 0L && Calendar.getInstance().timeInMillis - savedTime < refreshTime) {
                 // Data will be loaded from cache
                 factsDao.getAllFacts()?.let {
                     dataLoading.postValue(false)
@@ -47,6 +51,17 @@ class FactsRepository(context: Context) {
             }
         }
         return titleWithFacts
+    }
+
+    private fun getCacheDuration(): Long {
+        return try {
+            val cacheDurationTime = preferenceHelper.getCacheDuration()
+            val cacheDuration = cacheDurationTime?.toLong() ?: DEFAULT_CACHE_TIME
+            cacheDuration.times(ONE_MINUTE)
+        } catch (ex: NumberFormatException) {
+            DEFAULT_CACHE_TIME
+        }
+        return DEFAULT_CACHE_TIME
     }
 
     private fun fetchFromRemote(
