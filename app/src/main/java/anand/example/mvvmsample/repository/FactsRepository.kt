@@ -96,7 +96,7 @@ class FactsRepository(context: Context) {
 
     private fun removeEmptyItems(factsResponse: FactsResponse): FactsResponse {
         val rows = factsResponse.rows.filter { row ->
-            !row.title.isNullOrBlank() && !row.description.isNullOrBlank() && !row.imageHref.isNullOrBlank()
+            !row.title.isNullOrBlank() || !row.description.isNullOrBlank() || !row.imageHref.isNullOrBlank()
         }
         return FactsResponse(factsResponse.title, rows)
     }
